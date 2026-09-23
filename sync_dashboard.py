@@ -3,54 +3,54 @@ import re
 from datetime import datetime
 
 print("=========================================")
-print("🔄 RUNNING VISUAL DASHBOARD DATA SYNC PIPELINE")
+print("🔄 EXECUTING ADVANCED DASHBOARD SYNC PIPELINE")
 print("=========================================\n")
 
-# Target asset tracking paths
 REPORT_FILE = "scan_report.txt"
+METADATA_FILE = "network_metadata.txt"
 DASHBOARD_FILE = "dashboard.html"
 
-# Default fallback statistics profile parameters
-open_ports = "0"
 target_ip = "127.0.0.1"
+open_ports = "0"
+public_location = "Joliet, Illinois"
+isp_provider = "Auto-Detecting"
 
-# 1. Parse your latest Network Port Scan data out of the text log
+# 1. Parse port scan metrics
 if os.path.exists(REPORT_FILE):
-    print(f"Reading active metrics block inside {REPORT_FILE}...")
     with open(REPORT_FILE, "r") as f:
         content = f.read()
-        # Use regex filters to extract telemetry variables out of plain log lines
-        ip_match = re.search(r"Target Host Evaluated\s*:\s*([\d\.]+)", content)
-        vuln_match = re.search(r"Total Vulnerabilities Located\s*:\s*(\d+)", content)
-        
-        if ip_match: target_ip = ip_match.group(1)
+        vuln_match = re.search(r"Open Service Risks Found:\s*(\d+)", content)
         if vuln_match: open_ports = vuln_match.group(1)
-else:
-    print(f"⚠️ Warning: {REPORT_FILE} not found. Utilizing default local profiles.")
 
-# 2. Automatically measure your actual repository folder payload size in bytes
+# 2. Parse live network metadata out of your text log
+if os.path.exists(METADATA_FILE):
+    print(f"Scraping active metadata out of {METADATA_FILE}...")
+    with open(METADATA_FILE, "r") as f:
+        content = f.read()
+        ip_match = re.search(r"Public IP Address:\s*([\d\.]+)", content)
+        loc_match = re.search(r"Node Location\s*:\s*(.*)", content)
+        isp_match = re.search(r"Network Provider\s*:\s*(.*)", content)
+
+        if ip_match: target_ip = ip_match.group(1)
+        if loc_match: public_location = loc_match.group(1).strip()
+        if isp_match: isp_provider = isp_match.group(1).strip()
+
+# 3. Calculate dynamic workspace tracking sizing parameters
 total_bytes = 0
 for file in os.listdir("."):
     if file.endswith(".txt") or file.endswith(".sh") or file.endswith(".py") or file.endswith(".html"):
         total_bytes += os.path.getsize(file)
 
-print(f"Calculated active source file inventory envelope size: {total_bytes} Bytes")
-
-# 3. Read the dashboard HTML structure, inject the live variables, and rewrite it
+# 4. Inject all properties directly into your dashboard layout
 if os.path.exists(DASHBOARD_FILE):
     with open(DASHBOARD_FILE, "r") as f:
         html = f.read()
-    
-    # Programmatically slice and swap text markers inside the html layout template
-    html = re.sub(r"Target Evaluated:.*</strong>", f"Target Evaluated:</strong> <strong>{target_ip}</strong>", html)
-    html = re.sub(r"Total Open Vulnerabilities:.*</strong>", f"Total Open Vulnerabilities:</strong> <strong>{open_ports}</strong>", html)
-    html = re.sub(r"Total Storage Footprint:.*</strong>", f"Total Storage Footprint:</strong> <strong>{total_bytes} Bytes</strong>", html)
-    html = re.sub(r"Host Profile Location:.*</p>", f"Host Profile Location: DELL-LAPTOP | Last Script Sync: {datetime.now().strftime('%M:%S')}</p>", html)
-    
+
+    html = re.sub(r"Target Range Checked:.*</strong>", f"Target Range Checked:</strong> <strong style='color: #6366f1;'>{target_ip}</strong>", html)
+    html = re.sub(r"Open Network Vulnerabilities:.*</strong>", f"Open Network Vulnerabilities:</strong> <strong style='color: #10b981;'>{open_ports} Exposed Ports</strong>", html)
+    html = re.sub(r"Total Directory Footprint:.*</span>", f"Total Directory Footprint:</span> <span class='metric-value'>{total_bytes} Bytes</span>", html)
+    html = re.sub(r"Host Node Profile:.*</p>", f"Host Node Profile: DELL-LAPTOP | Location: {public_location} | ISP: {isp_provider}</p>", html)
+
     with open(DASHBOARD_FILE, "w") as f:
         f.write(html)
-    print(f"📊 Success: {DASHBOARD_FILE} has been programmatically updated with live system metrics!")
-else:
-    print(f"❌ Error: {DASHBOARD_FILE} structural template missing.")
-
-print("\n=========================================")
+    print("📊 Success: HTML Monitoring Dashboard updated with live network and file metrics!")
