@@ -11,7 +11,7 @@ python3 api_fetcher.py
 python3 db_logger.py
 python3 sync_dashboard.py
 python3 db_report.py
-
+python3 generate_chart.py
 echo "========================================="
 echo "✅ PIPELINE SUCCESS: All systems synchronized!"
 echo "========================================="

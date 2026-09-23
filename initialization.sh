@@ -1,5 +1,5 @@
 #!/bin/bash
-# Automated workspace audit and cross-OS compression script
+# Automated workspace audit, compression, and log rotation script
 
 echo "Starting workspace audit..."
 
@@ -20,10 +20,10 @@ BACKUP_NAME="project_backup_$(date +%F).tar.gz"
 tar -czf "$BACKUP_NAME" project*.txt
 echo "Backup complete! Saved locally as: $BACKUP_NAME"
 
-# --- NEW WINDOWS BACKUP MIRROR SECTION ---
-echo "Mirroring backup safely to Windows Storage..."
-# This finds your exact Windows username dynamically and copies the file to your Windows Documents folder
-WINDOWS_USER=$(powershell.exe '$env:UserName' | tr -d '\r')
-mkdir -p "/mnt/c/Users/$WINDOWS_USER/Documents/Project_Backups"
-cp "$BACKUP_NAME" "/mnt/c/Users/$WINDOWS_USER/Documents/Project_Backups/"
-echo "Cross-OS mirror sync successful!"
+# --- AUTOMATED STORAGE RETENTION LOG ROTATION SECTION ---
+echo "Evaluating local disk storage retention window..."
+
+# Find and delete backup archives matching our pattern that were modified more than 7 days ago
+find . -name "project_backup_*.tar.gz" -type f -mtime +7 -exec rm -f {} \;
+
+echo "Log rotation verification scan complete! Storage footprint minimized."
